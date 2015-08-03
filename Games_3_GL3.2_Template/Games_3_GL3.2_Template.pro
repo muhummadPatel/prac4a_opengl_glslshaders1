@@ -6,7 +6,13 @@ SOURCES       = glwidget.cpp \
                 main.cpp \
     stlModel.cpp
 QT += core gui opengl widgets
+
+#for mac
 LIBS += -lGLEW -L/usr/local/lib
+
+#for Linux
+#LIBS += -lGLEW
+
 RESOURCES += resources.qrc
 #QMAKE_CXXFLAGS += -DSHOULD_LOAD_SHADERS
 CONFIG += -std=c++11
