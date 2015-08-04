@@ -233,7 +233,18 @@ void GLWidget::loadModel(){
     // vertex buffer.
     m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
     m_shader.enableAttributeArray( "vertex" );
+
     setRenderColor(1);
+
+    GLuint colours_vbo = 0;
+    glGenBuffers(1, &colours_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
+    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), model.colours, GL_STATIC_DRAW);
+
+    glBindBuffer (GL_ARRAY_BUFFER, colours_vbo);
+    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glEnableVertexAttribArray (1);
 }
 
 //translates the model

@@ -38,6 +38,16 @@ bool stlModel::read(string filename){
             points[i] = testTri[i];
         }
 
+        float testCols[] = {
+          1.0f, 0.0f,  0.0f,
+          0.0f, 1.0f,  0.0f,
+          0.0f, 0.0f,  1.0f
+        };
+        colours = new float[numTriangles * 3 * 3];
+        for(int i  = 0; i < 9; i++){
+            colours[i] = testCols[i];
+        }
+
         return true;
     }
 
