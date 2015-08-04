@@ -27,6 +27,20 @@ stlModel::~stlModel(){
 
 //function to read in binary stl file with the given filename
 bool stlModel::read(string filename){
+    if(filename == "TEST"){
+        float testTri[] = { -0.5f, -0.5f, 0.0f, 1.0f,
+                            0.5f, -0.5f, 0.0f, 1.0f,
+                            0.0f,  0.5f, 0.0f, 1.0f };
+
+        numTriangles = 1;
+        points = new float[numTriangles * 12];
+        for(int i  = 0; i < 12; i++){
+            points[i] = testTri[i];
+        }
+
+        return true;
+    }
+
     ifstream infile(filename.c_str(), ios::in|ios::binary);
 
     if(!infile){

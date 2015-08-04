@@ -35,13 +35,14 @@ GLuint activeAxis = 0; //x=0, y=1, z=2
 GLuint activeTransformation = 0; //translate=0, rotate=1, scale=2
 
 //constructor
+//TODO: set model_filename back to empty
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
     : QGLWidget( format, parent ),
       m_vertexBuffer( QOpenGLBuffer::VertexBuffer ),
       red(1.0f),
       green(0.0f),
       blue(0.0f),
-      model_filename("")
+      model_filename("TEST")
 {
     //set up the menu bar
     mainMenu = new QMenuBar(this);
