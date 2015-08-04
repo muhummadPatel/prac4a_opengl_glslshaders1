@@ -104,6 +104,24 @@ bool stlModel::read(string filename){
         infile.read(attrib, 2);
     }
 
+    int colLen = numTriangles * 3 * 3;
+    colours = new float[colLen];
+    for(int i  = 0; i < colLen; i+=3){
+//        if(i < colLen/3){
+            colours[i] = 0.0f;
+            colours[i+1] = 0.0f;
+            colours[i+2] = 1.0f;
+//        }else if(i < (2 * (colLen/3))){
+//            colours[i] = 0.0f;
+//            colours[i+1] = 1.0f;
+//            colours[i+2] = 0.0f;
+//        }else{
+//            colours[i] = 1.0f;
+//            colours[i+1] = 0.0f;
+//            colours[i+2] = 0.0f;
+//        }
+    }
+
     //cout << "normals ___" << endl;
     //cout << oss.str() << endl;
     infile.close();

@@ -42,7 +42,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
       red(1.0f),
       green(0.0f),
       blue(0.0f),
-      model_filename("TEST")
+      model_filename("bunny.stl")
 {
     //set up the menu bar
     mainMenu = new QMenuBar(this);
@@ -239,7 +239,7 @@ void GLWidget::loadModel(){
     GLuint colours_vbo = 0;
     glGenBuffers(1, &colours_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), model.colours, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.colours, GL_STATIC_DRAW);
 
     glBindBuffer (GL_ARRAY_BUFFER, colours_vbo);
     glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -413,6 +413,12 @@ void GLWidget::paintGL()
 {
     // Clear the buffer with the current clearing color
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    //NEW===
+    glEnable (GL_CULL_FACE); // cull face
+    glCullFace (GL_BACK); // cull back face
+    glFrontFace (GL_CCW); // GL_CCW for counter clock-wise
+    //NEW===
 
     // Draw stuff
     glDrawArrays( GL_TRIANGLES, 0,  model.numTriangles * 3);
