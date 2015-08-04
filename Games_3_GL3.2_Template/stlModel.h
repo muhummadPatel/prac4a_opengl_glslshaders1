@@ -7,7 +7,8 @@ class stlModel{
     public:
         unsigned long numTriangles;
         float* points;
-        stlModel(): numTriangles(0), points(NULL){}
+        float* normals;
+        stlModel(): numTriangles(0), points(NULL), normals(NULL){}
         ~stlModel();
         bool read(std::string filename);
 };
