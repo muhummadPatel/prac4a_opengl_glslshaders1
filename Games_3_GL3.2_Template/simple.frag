@@ -1,8 +1,9 @@
 #version 330
 in vec3 frag_vertex;
 in vec3 frag_normal;
-in vec3 frag_colour;
 in vec3 frag_surfaceToLight1;
+
+uniform vec4 frag_colour;
 
 vec3 camera_position = vec3(0.0, 0.0, 3.0);
 uniform vec3 light_position;
@@ -27,12 +28,12 @@ void main( void )
 
 //    out_color = vec4((amb + diff + spec).xyz, 1.0);
 
-    vec3 ambient = k_ambient * frag_colour * intensity;
+    vec3 ambient = k_ambient * frag_colour.rgb * intensity;
 
     vec3 n_normal = normalize(frag_normal);
     vec3 n_surfaceToLight = normalize(light_position - frag_vertex);
     float k_diffuse = max(dot(n_normal, n_surfaceToLight), 0.0f);
-    vec3 diffuse = k_diffuse * frag_colour *  intensity;
+    vec3 diffuse = k_diffuse * frag_colour.rgb *  intensity;
 
 
     vec3 incidence_vect = -n_surfaceToLight;

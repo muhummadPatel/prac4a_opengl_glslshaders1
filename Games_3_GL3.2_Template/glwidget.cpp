@@ -247,17 +247,6 @@ void GLWidget::loadModel(){
 
     glEnableVertexAttribArray (1);
 
-
-    GLuint colours_vbo = 0;
-    glGenBuffers(2, &colours_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
-    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.colours, GL_STATIC_DRAW);
-
-    glBindBuffer (GL_ARRAY_BUFFER, colours_vbo);
-    glVertexAttribPointer (2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    glEnableVertexAttribArray (2);
-
     updateLights();
 }
 
@@ -307,7 +296,7 @@ void GLWidget::updateMVP(){
 
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
-    glm::vec3 light_position = glm::vec3(1.0f, 1.0f, 3.0f);
+    glm::vec3 light_position = glm::vec3(-1.0f, -1.0f, 4.0f);
     glm::vec3 intensity = glm::vec3(0.5f, 0.5f, 0.5f);
     float k_ambient = 1.0f;
 
@@ -370,7 +359,7 @@ void GLWidget::setRenderColor(int opt){
     }
 
     //push new colour to fcolour uniform variable in the shader program
-    glUniform4f(glGetUniformLocation(m_shader.programId(),"fcolor"), red, green, blue,1.0f);
+    glUniform4f(glGetUniformLocation(m_shader.programId(),"frag_colour"), red, green, blue, 1.0f);
     updateGL();
 }
 
@@ -439,6 +428,7 @@ void GLWidget::resizeGL( int w, int h )
 
 void GLWidget::paintGL()
 {
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
     // Clear the buffer with the current clearing color
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 

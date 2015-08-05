@@ -27,29 +27,6 @@ stlModel::~stlModel(){
 
 //function to read in binary stl file with the given filename
 bool stlModel::read(string filename){
-    if(filename == "TEST"){
-        float testTri[] = { -0.5f, -0.5f, 0.0f, 1.0f,
-                            0.5f, -0.5f, 0.0f, 1.0f,
-                            0.0f,  0.5f, 0.0f, 1.0f };
-
-        numTriangles = 1;
-        points = new float[numTriangles * 12];
-        for(int i  = 0; i < 12; i++){
-            points[i] = testTri[i];
-        }
-
-        float testCols[] = {
-          1.0f, 0.0f,  0.0f,
-          0.0f, 1.0f,  0.0f,
-          0.0f, 0.0f,  1.0f
-        };
-        colours = new float[numTriangles * 3 * 3];
-        for(int i  = 0; i < 9; i++){
-            colours[i] = testCols[i];
-        }
-
-        return true;
-    }
 
     ifstream infile(filename.c_str(), ios::in|ios::binary);
 
@@ -103,24 +80,6 @@ bool stlModel::read(string filename){
         //read and discard the 2 byte attribute
         char attrib[2];
         infile.read(attrib, 2);
-    }
-
-    int colLen = numTriangles * 3 * 3;
-    colours = new float[colLen];
-    for(int i  = 0; i < colLen; i+=3){
-//        if(i < colLen/3){
-            colours[i] = 0.0f;
-            colours[i+1] = 0.0f;
-            colours[i+2] = 1.0f;
-//        }else if(i < (2 * (colLen/3))){
-//            colours[i] = 0.0f;
-//            colours[i+1] = 1.0f;
-//            colours[i+2] = 0.0f;
-//        }else{
-//            colours[i] = 1.0f;
-//            colours[i+1] = 0.0f;
-//            colours[i+2] = 0.0f;
-//        }
     }
 
     //cout << "normals ___" << endl;
