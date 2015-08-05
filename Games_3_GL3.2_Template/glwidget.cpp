@@ -2,6 +2,7 @@
 #include "stlModel.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/matrix_inverse.hpp"
 #include "glm/gtx/transform.hpp"
 
 #include <iostream>
@@ -294,6 +295,9 @@ void GLWidget::updateMVP(){
     glm::mat4 MVP = projection * view * modelMat;
     //push MVP matrix to the vertexShader
     glUniformMatrix4fv(glGetUniformLocation(m_shader.programId(),"MVP"), 1, GL_FALSE, &MVP[0][0]);
+
+    glm::mat3 MVN = glm::inverseTranspose(glm::mat3(view * modelMat));
+    glUniformMatrix4fv(glGetUniformLocation(m_shader.programId(),"MVN"), 1, GL_FALSE, &MVN[0][0]);
 
     //Redraw/update the scene
     updateGL();
