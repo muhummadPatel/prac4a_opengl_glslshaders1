@@ -1,10 +1,11 @@
 #ifndef GLHEADERS_H_
 #define GLHEADERS_H_
 
-#include </usr/local/include/GL/glew.h> //for mac
-//#include <GL/glew.h> //for Linux
-#include <OpenGL/glu.h> //for mac
-//#include <GL/glu.h> //for Linux
+//#include </usr/local/include/GL/glew.h> //for mac
+#include <GL/glew.h> //for Linux
+//#include <OpenGL/glu.h> //for mac
+#include <GL/glu.h> //for Linux
+
 #include <QDebug>
 #include <QString>
 
