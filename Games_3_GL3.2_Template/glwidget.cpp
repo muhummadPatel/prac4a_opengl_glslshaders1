@@ -299,7 +299,7 @@ void GLWidget::updateMVP(){
     glUniformMatrix4fv(glGetUniformLocation(m_shader.programId(),"MVP"), 1, GL_FALSE, &MVP[0][0]);
 
     glm::mat3 MVN = glm::inverseTranspose(glm::mat3(view * modelMat));
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.programId(),"MVN"), 1, GL_FALSE, &MVN[0][0]);
+    glUniformMatrix3fv(glGetUniformLocation(m_shader.programId(),"MVN"), 1, GL_FALSE, &MVN[0][0]);
 
     //Redraw/update the scene
     updateGL();
@@ -307,9 +307,11 @@ void GLWidget::updateMVP(){
 
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
-    glm::vec3 intensity = glm::vec3(0.2f, 0.2f, 0.2f);
+    glm::vec3 light_position = glm::vec3(1.0f, 1.0f, 3.0f);
+    glm::vec3 intensity = glm::vec3(0.5f, 0.5f, 0.5f);
     float k_ambient = 1.0f;
 
+    glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_position"), 1, &light_position[0]);
     glUniform3fv(glGetUniformLocation(m_shader.programId(), "intensity"), 1, &intensity[0]);
     glUniform1fv(glGetUniformLocation(m_shader.programId(), "k_ambient"), 1, &k_ambient);
 }
