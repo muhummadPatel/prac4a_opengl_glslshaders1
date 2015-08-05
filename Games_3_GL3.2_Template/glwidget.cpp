@@ -1,5 +1,6 @@
 #include "glwidget.h"
 #include "stlModel.h"
+#include "objModel.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/matrix_inverse.hpp"
@@ -196,6 +197,11 @@ void GLWidget::loadModel(){
     glBindVertexArray(VAO);
 
     // We need us some vertex data. Start simple with a triangle ;-)
+
+    objModel obj;
+    obj.read("bunny.obj");
+    std::cout << "objnt " << obj.vertices.size()/3 << "\n" << endl;
+
     model.read(model_filename);
     float* points = model.points;
 
@@ -206,7 +212,8 @@ void GLWidget::loadModel(){
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
-    m_vertexBuffer.allocate( points, model.numTriangles * 3 * 4 * sizeof( float ) );
+    //m_vertexBuffer.allocate(points, model.numTriangles * 3 * 4 * sizeof( float ) );
+    m_vertexBuffer.allocate(&obj.vertices[0], obj.vertices.size() * sizeof( glm::vec3 ) );
 
 
     //shaders can only be loaded once. Don't want to run the code if we have already loaded
@@ -232,7 +239,7 @@ void GLWidget::loadModel(){
 
     // Enable the "vertex" attribute to bind it to our currently bound
     // vertex buffer.
-    m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
+    m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 3 );
     m_shader.enableAttributeArray( "vertex" );
 
     setRenderColor(1);
@@ -240,10 +247,11 @@ void GLWidget::loadModel(){
     GLuint normals_vbo = 0;
     glGenBuffers(1, &normals_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
-    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.normals, GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.normals, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, obj.normals.size() * sizeof(glm::vec3 ), &obj.normals[0], GL_STATIC_DRAW);
 
     glBindBuffer (GL_ARRAY_BUFFER, normals_vbo);
-    glVertexAttribPointer (1, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glEnableVertexAttribArray (1);
 
@@ -378,6 +386,9 @@ void GLWidget::initializeGL(){
                  << QString::fromUtf8(
                         reinterpret_cast<const char*>(errorStr), size);
     }
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     // get context opengl-version
     qDebug() << "Widget OpenGl: " << format().majorVersion() << "." << format().minorVersion();

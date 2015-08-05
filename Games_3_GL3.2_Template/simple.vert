@@ -1,5 +1,5 @@
 #version 330
-in vec4 vertex;
+in vec3 vertex;
 
 layout(location = 1) in vec3 vertex_normal;
 
@@ -21,11 +21,11 @@ void main( void )
 //    frag_colour = vertex_colour;
 //    gl_Position = vertex;
 
-    vec4 transformed_vertex = MVP * vertex;
+    vec4 transformed_vertex = MVP * vec4(vertex, 1.0);
 
     frag_vertex = vec3(transformed_vertex.xyz);
     frag_normal = normalize(MVN * vertex_normal);
     frag_surfaceToLight = light_position - transformed_vertex.xyz;
 
-    gl_Position = MVP * vertex;
+    gl_Position = MVP * vec4(vertex, 1.0);
 }
