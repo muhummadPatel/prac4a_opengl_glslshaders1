@@ -240,7 +240,7 @@ void GLWidget::loadModel(){
     GLuint normals_vbo = 0;
     glGenBuffers(1, &normals_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
-    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 4 * sizeof( float ), model.normals, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.normals, GL_STATIC_DRAW);
 
     glBindBuffer (GL_ARRAY_BUFFER, normals_vbo);
     glVertexAttribPointer (1, 4, GL_FLOAT, GL_FALSE, 0, NULL);

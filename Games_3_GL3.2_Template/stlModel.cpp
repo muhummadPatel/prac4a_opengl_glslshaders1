@@ -70,9 +70,10 @@ bool stlModel::read(string filename){
     cout << "number of triangles: " << numTriangles << endl;
 
     //read in the triangles
-    points = new float[numTriangles * 12];
-    normals = new float[numTriangles * 12]; //normal for every vertex is same as for the face
+    points = new float[numTriangles * 3 * 4];
+    normals = new float[numTriangles * 3 * 3]; //normal for every vertex is same as for the face
     int c = 0;
+    int d = 0;
     //ostringstream oss;
     for(int i = 0; i < numTriangles; i++){
         //read in the normal vector
@@ -91,12 +92,12 @@ bool stlModel::read(string filename){
             points[c+2] = v1[2]; //z
             points[c+3] = 1.0f;  //w
 
-            normals[c] = norm[0];   //x
-            normals[c+1] = norm[1]; //y
-            normals[c+2] = norm[2]; //z
-            normals[c+3] = 0.0f;    //w
+            normals[d] = norm[0];   //x
+            normals[d+1] = norm[1]; //y
+            normals[d+2] = norm[2]; //z
             //oss << normals[c] << " " << normals[c+1] << " " << normals[c+2] << " " << normals[c+3] << endl;
             c+=4;
+            d+=3;
         }
 
         //read and discard the 2 byte attribute
