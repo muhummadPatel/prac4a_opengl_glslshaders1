@@ -236,15 +236,26 @@ void GLWidget::loadModel(){
 
     setRenderColor(1);
 
+    GLuint normals_vbo = 0;
+    glGenBuffers(1, &normals_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
+    glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 4 * sizeof( float ), model.normals, GL_STATIC_DRAW);
+
+    glBindBuffer (GL_ARRAY_BUFFER, normals_vbo);
+    glVertexAttribPointer (1, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glEnableVertexAttribArray (1);
+
+
     GLuint colours_vbo = 0;
-    glGenBuffers(1, &colours_vbo);
+    glGenBuffers(2, &colours_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
     glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.colours, GL_STATIC_DRAW);
 
     glBindBuffer (GL_ARRAY_BUFFER, colours_vbo);
-    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer (2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-    glEnableVertexAttribArray (1);
+    glEnableVertexAttribArray (2);
 }
 
 //translates the model
