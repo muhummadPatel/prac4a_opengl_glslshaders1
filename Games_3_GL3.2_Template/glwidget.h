@@ -55,6 +55,8 @@ private:
     void rotateModel(glm::vec3 rotationAxis, float degrees);
     void scaleModel(glm::vec3 scaleFactor);
     void updateMVP();
+
+    void updateLights();
 };
 
 #endif // GLWIDGET_H

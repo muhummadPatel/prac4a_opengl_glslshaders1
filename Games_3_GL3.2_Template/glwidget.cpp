@@ -257,6 +257,8 @@ void GLWidget::loadModel(){
     glVertexAttribPointer (2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glEnableVertexAttribArray (2);
+
+    updateLights();
 }
 
 //translates the model
@@ -301,6 +303,15 @@ void GLWidget::updateMVP(){
 
     //Redraw/update the scene
     updateGL();
+}
+
+//update light vars and push them to the shader
+void GLWidget::updateLights(){
+    glm::vec3 intensity = glm::vec3(0.2f, 0.2f, 0.2f);
+    float k_ambient = 1.0f;
+
+    glUniform3fv(glGetUniformLocation(m_shader.programId(), "intensity"), 1, &intensity[0]);
+    glUniform1fv(glGetUniformLocation(m_shader.programId(), "k_ambient"), 1, &k_ambient);
 }
 
 //increments the ActiveAxis for transformations (cycles in range from 0 to 2)
