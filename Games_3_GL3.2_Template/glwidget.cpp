@@ -86,31 +86,38 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
 
     //do the correct transformation
     switch(activeTransformation){
-        //translate
+        //translate model
         case 0:
             if(activeAxis == 0){
                 translateModel(glm::vec3(dir * transStep, 0.0f, 0.0f));
-                std::cout << "translate x" << std::endl;
+                //std::cout << "translate x" << std::endl;
+                QWidget::setWindowTitle("Prac4: Translating model in x-axis");
             }else if(activeAxis == 1){
                 translateModel(glm::vec3(0.0f, dir * transStep, 0.0f));
-                std::cout << "translate y" << std::endl;
+                //std::cout << "translate y" << std::endl;
+                QWidget::setWindowTitle("Prac4: Translating model in y-axis");
+
             }else{
                 translateModel(glm::vec3(0.0f, 0.0f, dir * transStep));
                 std::cout << "translate z" << std::endl;
+                QWidget::setWindowTitle("Prac4: Translating model in z-axis");
             }
             break;
 
-        //rotate
+        //rotate model
         case 1:
             if(activeAxis == 0){
                 rotateModel(glm::vec3(1.0f, 0.0f, 0.0f), dir * rotStep);
-                std::cout << "rotate x" << std::endl;
+                //std::cout << "rotate x" << std::endl;
+                QWidget::setWindowTitle("Prac4: Rotating model in x-axis");
             }else if(activeAxis == 1){
                 rotateModel(glm::vec3(0.0f, 1.0f, 0.0f), dir * rotStep);
-                std::cout << "rotate y" << std::endl;
+                //std::cout << "rotate y" << std::endl;
+                QWidget::setWindowTitle("Prac4: Rotating model in y-axis");
             }else{
                 rotateModel(glm::vec3(0.0f, 0.0f, 1.0f), dir * rotStep);
-                std::cout << "rotate z" << std::endl;
+                //std::cout << "rotate z" << std::endl;
+                QWidget::setWindowTitle("Prac4: Rotating model in z-axis");
             }
             break;
 
@@ -118,13 +125,16 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
         case 2:
             if(activeAxis == 0){
                 scaleModel(glm::vec3((dir * scaleStep) + 1.0f, 1.0f, 1.0f));
-                std::cout << "scale x" << std::endl;
+                //std::cout << "scale x" << std::endl;
+                QWidget::setWindowTitle("Prac4: Scaling model in x-axis");
             }else if (activeAxis == 1){
                 scaleModel(glm::vec3(1.0f, (dir * scaleStep) + 1.0f, 1.0f));
-                std::cout << "scale y" << std::endl;
+                //std::cout << "scale y" << std::endl;
+                QWidget::setWindowTitle("Prac4: Scaling model in y-axis");
             }else{
                 scaleModel(glm::vec3(1.0f, 1.0f, (dir * scaleStep) + 1.0f));
-                std::cout << "scale z" << std::endl;
+                //std::cout << "scale z" << std::endl;
+                QWidget::setWindowTitle("Prac4: Scaling model in z-axis");
             }
 
     }
@@ -132,6 +142,8 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
     //update the scene
     updateGL();
 }
+
+std::vector<std::string> axes = {"x-axis", "y-axis", "z-axis"};
 
 //handles keyPress input
 void GLWidget::keyPressEvent( QKeyEvent* e )
@@ -143,43 +155,46 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
             break;
 
         case Qt::Key_1:
-            std::cout << "change col 1" << std::endl;
+            //std::cout << "change col 1" << std::endl;
             setRenderColor(1);
             break;
 
         case Qt::Key_2:
-            std::cout << "change col 2" << std::endl;
+            //std::cout << "change col 2" << std::endl;
             setRenderColor(2);
             break;
 
         case Qt::Key_3:
-            std::cout << "change col 3" << std::endl;
+            //std::cout << "change col 3" << std::endl;
             setRenderColor(3);
             break;
 
         case Qt::Key_4:
-            std::cout << "change col 4" << std::endl;
+            //std::cout << "change col 4" << std::endl;
             setRenderColor(4);
             break;
 
         case Qt::Key_5:
-            std::cout << "change col 5" << std::endl;
+            //std::cout << "change col 5" << std::endl;
             setRenderColor(5);
             break;
 
         case Qt::Key_T:
             incrementActiveAxis();
             activeTransformation = 0;
+            QWidget::setWindowTitle(QString::fromStdString("Prac4: Translating model in " + axes[activeAxis]));
             break;
 
         case Qt::Key_R:
             incrementActiveAxis();
             activeTransformation = 1;
+            QWidget::setWindowTitle(QString::fromStdString("Prac4: Rotating model in " + axes[activeAxis]));
             break;
 
         case Qt::Key_S:
             incrementActiveAxis();
             activeTransformation = 2;
+            QWidget::setWindowTitle(QString::fromStdString("Prac4: Scaling model in " + axes[activeAxis]));
             break;
 
         default:
@@ -242,7 +257,7 @@ void GLWidget::loadModel(){
     m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 3 );
     m_shader.enableAttributeArray( "vertex" );
 
-    setRenderColor(1);
+    setRenderColor(0);
 
     GLuint normals_vbo = 0;
     glGenBuffers(1, &normals_vbo);
@@ -305,7 +320,7 @@ void GLWidget::updateMVP(){
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
     glm::vec3 light_position = glm::vec3(-1.0f, -1.0f, 4.0f);
-    glm::vec3 intensity = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 intensity = glm::vec3(0.5f, 1.0f, 0.5f);
     float k_ambient = 1.0f;
 
     glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_position"), 1, &light_position[0]);
@@ -356,14 +371,13 @@ void GLWidget::setRenderColor(int opt){
             blue = 0.0f;
             break;
         case 5:
-            //magenta
-            red = blue = 1.0f;
-            green = 0.0f;
+            //white
+            red = blue = green = 1.0f;
             break;
 
         default:
-            //red
-            setRenderColor(1);
+            //white
+            setRenderColor(5);
     }
 
     //push new colour to fcolour uniform variable in the shader program
@@ -389,6 +403,12 @@ void GLWidget::initializeGL(){
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    //NEW===
+    glEnable (GL_CULL_FACE); // cull face
+    glCullFace (GL_BACK); // cull back face
+    glFrontFace (GL_CCW); // GL_CCW for counter clock-wise
+    //NEW===
 
     // get context opengl-version
     qDebug() << "Widget OpenGl: " << format().majorVersion() << "." << format().minorVersion();
@@ -442,12 +462,6 @@ void GLWidget::paintGL()
     glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
     // Clear the buffer with the current clearing color
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    //NEW===
-    glEnable (GL_CULL_FACE); // cull face
-    glCullFace (GL_BACK); // cull back face
-    glFrontFace (GL_CCW); // GL_CCW for counter clock-wise
-    //NEW===
 
     // Draw stuff
     glDrawArrays( GL_TRIANGLES, 0,  model.numTriangles * 3);

@@ -6,6 +6,7 @@
 int main(int argc, char* argv[])
 {
     QApplication a( argc, argv );
+    QCoreApplication::setApplicationName("Prac4: Translating model in x-axis");
 
     // Specify an OpenGL 3.2 format using the Core profile.
     // That is, no old-school fixed pipeline functionality
