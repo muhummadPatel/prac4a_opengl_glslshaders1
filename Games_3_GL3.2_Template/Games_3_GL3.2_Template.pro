@@ -17,7 +17,7 @@ LIBS += -lGLEW -L/usr/local/lib
 
 RESOURCES += resources.qrc
 #QMAKE_CXXFLAGS += -DSHOULD_LOAD_SHADERS
-CONFIG += -std=c++11
+CONFIG += c++11
 # install
 target.path = boom
 INSTALLS += target
