@@ -50,14 +50,13 @@ private:
 
     //used to keep track of which transformation and on which axis
     void incrementActiveAxis();
-    void incrementActiveTransformation();
 
     //used to generate model matrix and upload MVP matrix to shader
     void translateModel(glm::vec3 translation);
     void rotateModel(glm::vec3 rotationAxis, float degrees);
     void scaleModel(glm::vec3 scaleFactor);
+    void rotateLights(float degrees);
     void updateMVP();
-
     void updateLights();
 };
 

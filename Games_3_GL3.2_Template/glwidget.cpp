@@ -29,12 +29,13 @@ bool shadersLoaded = false;
 float transStep = 0.2f;
 float rotStep = 12.0f;
 float scaleStep = 0.5f;
+float lightRotStep = 12.0f;
 
-glm::mat4 translationMat, rotationMat, scaleMat;
+glm::mat4 translationMat, rotationMat, scaleMat, lightRotationMat;
 glm::mat4 modelMat, view, projection;
 
 GLuint activeAxis = 0; //x=0, y=1, z=2
-GLuint activeTransformation = 0; //translate=0, rotate=1, scale=2
+GLuint activeTransformation = 0; //translate=0, rotate=1, scale=2, rotateLights=3
 
 //constructor
 //TODO: set model_filename back to empty
@@ -136,7 +137,12 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
                 //std::cout << "scale z" << std::endl;
                 QWidget::setWindowTitle("Prac4: Scaling model in z-axis");
             }
+            break;
 
+            //rotate lights
+            case 3:
+                rotateLights(dir * lightRotStep);
+                break;
     }
 
     //update the scene
@@ -195,6 +201,11 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
             incrementActiveAxis();
             activeTransformation = 2;
             QWidget::setWindowTitle(QString::fromStdString("Prac4: Scaling model in " + axes[activeAxis]));
+            break;
+
+        case Qt::Key_L:
+            activeTransformation = 3;
+            QWidget::setWindowTitle(QString::fromStdString("Prac4: Rotating lights around scene"));
             break;
 
         default:
@@ -317,10 +328,20 @@ void GLWidget::updateMVP(){
     updateGL();
 }
 
+void GLWidget::rotateLights(float degrees){
+    //set the rotation matrix to the new rotation
+    lightRotationMat = glm::rotate(lightRotationMat, degrees, glm::vec3(0.0f, 0.1f, 0.0f));
+
+    //push changed lighting data to shader
+    updateLights();
+}
+
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
     glm::vec3 light_position = glm::vec3(-1.0f, -1.0f, 4.0f);
-    glm::vec3 intensity = glm::vec3(0.5f, 1.0f, 0.5f);
+    light_position = glm::vec3(translationMat * lightRotationMat * glm::vec4(light_position, 1.0f));
+
+    glm::vec3 intensity = glm::vec3(0.5f, 0.5f, 0.5f);
     float k_ambient = 1.0f;
 
     glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_position"), 1, &light_position[0]);
@@ -333,14 +354,6 @@ void GLWidget::incrementActiveAxis(){
     activeAxis++;
     if(activeAxis > 2){
         activeAxis = 0;
-    }
-}
-
-//increments the transformation being performed by mousewheel (cycles in range 0 to 2)
-void GLWidget::incrementActiveTransformation(){
-    activeTransformation++;
-    if(activeTransformation > 2){
-        activeTransformation = 0;
     }
 }
 
