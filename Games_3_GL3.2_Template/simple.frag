@@ -16,7 +16,7 @@ out vec4 out_color;
 
 //optimise the pants off of this craptastic method
 vec3 lightUp(vec3 light_position, vec3 intensity){
-    vec3 ambient = k_ambient * frag_colour.rgb * intensity;
+    vec3 ambient = k_ambient * frag_colour.rgb * intensity;//actually, move ambient outside (independent of light sources)
 
     vec3 n_normal = normalize(frag_normal);
     vec3 n_surfaceToLight = normalize(light_position - frag_vertex);

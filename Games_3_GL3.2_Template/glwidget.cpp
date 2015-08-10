@@ -45,8 +45,8 @@ std::vector<float> lightPositions = {
     -1.0f, -1.0f, -3.0f
 };
 std::vector<float> lightIntensities = {
-    0.2f, 0.4f, 0.2f,
-    0.4f, 0.2f, 0.2f
+    0.2f, 0.2f, 0.5f,
+    0.5f, 0.2f, 0.2f
 };
 
 //constructor
@@ -112,7 +112,7 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
 
             }else{
                 translateModel(glm::vec3(0.0f, 0.0f, dir * transStep));
-                std::cout << "translate z" << std::endl;
+                //std::cout << "translate z" << std::endl;
                 QWidget::setWindowTitle("Prac4: Translating model in z-axis");
             }
             break;
