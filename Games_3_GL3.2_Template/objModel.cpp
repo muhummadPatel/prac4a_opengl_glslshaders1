@@ -21,7 +21,7 @@ objModel::~objModel()
 
 }
 
-bool objModel::read(char* path){
+bool objModel::read(const char* path){
     printf("Loading OBJ file %s...\n", path);
 
     std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
@@ -83,6 +83,10 @@ bool objModel::read(char* path){
             fgets(stupidBuffer, 1000, file);
         }
     }
+
+    vertices.clear();
+    uvs.clear();
+    normals.clear();
 
     // For each vertex of each triangle
     for( unsigned int i=0; i<vertexIndices.size(); i++ ){

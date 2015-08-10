@@ -11,6 +11,7 @@
 
 #include "glm/glm.hpp"
 #include "stlModel.h"
+#include "objModel.h"
 
 class GLWidget : public QGLWidget
 {
@@ -39,6 +40,7 @@ private:
 
     //model related members
     stlModel model;
+    objModel obj;
     std::string model_filename;
     void loadModel();
 

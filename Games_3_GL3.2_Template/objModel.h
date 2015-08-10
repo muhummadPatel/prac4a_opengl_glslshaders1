@@ -16,7 +16,7 @@ class objModel
 
         objModel();
         ~objModel();
-        bool read(char* filename);
+        bool read(const char *filename);
 };
 
 #endif // OBJMODEL_H

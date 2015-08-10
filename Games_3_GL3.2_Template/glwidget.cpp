@@ -44,7 +44,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
       red(1.0f),
       green(0.0f),
       blue(0.0f),
-      model_filename("bunny.stl")
+      model_filename("bunny.obj")
 {
     //set up the menu bar
     mainMenu = new QMenuBar(this);
@@ -63,7 +63,7 @@ bool GLWidget::handle_open_clicked(){
     std::cout << "open" << std::endl;
 
     //show an open file dialog and get the selected file name
-    model_filename = QFileDialog::getOpenFileName(this, tr("Open stl model"), "~", "Stl files (*.stl)").toStdString();
+    model_filename = QFileDialog::getOpenFileName(this, tr("Open obj model"), "~", "Obj files (*.obj)").toStdString();
 
     //run intialiseGL to reset the scene and load up the new model
     initializeGL();
@@ -202,6 +202,9 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
     }
 }
 
+
+
+
 //helpers-------------------------------------------------------------------------------
 
 //loads in the model at location model_filename
@@ -213,12 +216,9 @@ void GLWidget::loadModel(){
 
     // We need us some vertex data. Start simple with a triangle ;-)
 
-    objModel obj;
-    obj.read("bunny.obj");
-    std::cout << "objnt " << obj.vertices.size()/3 << "\n" << endl;
-
-    model.read(model_filename);
-    float* points = model.points;
+    const char* fn = model_filename.c_str();
+    obj.read(fn);
+    //std::cout << "objnt " << obj.vertices.size()/3 << "\n" << std::endl;
 
     m_vertexBuffer.create();
     m_vertexBuffer.setUsagePattern( QOpenGLBuffer::StaticDraw );
@@ -385,6 +385,9 @@ void GLWidget::setRenderColor(int opt){
     updateGL();
 }
 
+
+
+
 //GL-Functions----------------------------------------------------------------------------------------------------
 
 //Loads neccessary components and sets up the OpenGl context
@@ -434,7 +437,7 @@ void GLWidget::initializeGL(){
 
 
     //set up the projection matrix (perspective projection for our 3d models)
-    projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 10.0f);
 
     //set up the view matrix (the "camera")
     glm::vec3 eye(0, 0, 3);
@@ -464,7 +467,7 @@ void GLWidget::paintGL()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // Draw stuff
-    glDrawArrays( GL_TRIANGLES, 0,  model.numTriangles * 3);
+    glDrawArrays( GL_TRIANGLES, 0,  obj.vertices.size());
 }
 
 bool GLWidget::prepareShaderProgram( const QString& vertexShaderPath,
