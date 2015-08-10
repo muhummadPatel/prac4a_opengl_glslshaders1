@@ -7,6 +7,7 @@
 #include "glm/gtx/transform.hpp"
 
 #include <iostream>
+#include <vector>
 
 #include <QCoreApplication>
 #include <QKeyEvent>
@@ -36,6 +37,17 @@ glm::mat4 modelMat, view, projection;
 
 GLuint activeAxis = 0; //x=0, y=1, z=2
 GLuint activeTransformation = 0; //translate=0, rotate=1, scale=2, rotateLights=3
+
+float k_ambient = 1.0f;
+const int numLights = 2;
+std::vector<float> lightPositions = {
+    1.0f, 1.0f, 4.0f,
+    -1.0f, -1.0f, -3.0f
+};
+std::vector<float> lightIntensities = {
+    0.2f, 0.4f, 0.2f,
+    0.4f, 0.2f, 0.2f
+};
 
 //constructor
 //TODO: set model_filename back to empty
@@ -338,14 +350,19 @@ void GLWidget::rotateLights(float degrees){
 
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
-    glm::vec3 light_position = glm::vec3(-1.0f, -1.0f, 4.0f);
-    light_position = glm::vec3(translationMat * lightRotationMat * glm::vec4(light_position, 1.0f));
+    std::vector<float> rotatedLightPositions;
+    for(int i = 0; i <  numLights; i++){
+        int offset = i * 3;
+        glm::vec4 pos = glm::vec4(lightPositions[offset + 0], lightPositions[offset + 1], lightPositions[offset + 2], 1.0f);
+        pos = translationMat * lightRotationMat * pos;
 
-    glm::vec3 intensity = glm::vec3(0.5f, 0.5f, 0.5f);
-    float k_ambient = 1.0f;
+        rotatedLightPositions.push_back(pos[0]);
+        rotatedLightPositions.push_back(pos[1]);
+        rotatedLightPositions.push_back(pos[2]);
+    }
 
-    glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_position"), 1, &light_position[0]);
-    glUniform3fv(glGetUniformLocation(m_shader.programId(), "intensity"), 1, &intensity[0]);
+    glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_positions"), numLights, &rotatedLightPositions[0]);
+    glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_intensities"), numLights, &lightIntensities[0]);
     glUniform1fv(glGetUniformLocation(m_shader.programId(), "k_ambient"), 1, &k_ambient);
 }
 
