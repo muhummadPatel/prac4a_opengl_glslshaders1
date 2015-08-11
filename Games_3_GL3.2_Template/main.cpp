@@ -1,5 +1,4 @@
 #include "glwidget.h"
-#include "stlModel.h"
 #include <QApplication>
 #include <QGLFormat>
 

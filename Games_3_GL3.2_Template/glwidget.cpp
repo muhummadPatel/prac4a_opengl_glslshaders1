@@ -1,5 +1,4 @@
 #include "glwidget.h"
-#include "stlModel.h"
 #include "objModel.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -35,8 +34,8 @@ float lightRotStep = 12.0f;
 glm::mat4 translationMat, rotationMat, scaleMat, lightRotationMat;
 glm::mat4 modelMat, view, projection;
 
-GLuint activeAxis = 0; //x=0, y=1, z=2
-GLuint activeTransformation = 0; //translate=0, rotate=1, scale=2, rotateLights=3
+uint activeAxis = 0; //x=0, y=1, z=2
+uint activeTransformation = 0; //translate=0, rotate=1, scale=2, rotateLights=3
 
 float k_ambient = 1.0f;
 const int numLights = 2;
@@ -49,6 +48,9 @@ std::vector<float> lightIntensities = {
     0.5f, 0.2f, 0.2f
 };
 
+std::vector<float> textureData;
+uint textureWidth = 0, textureHeight = 0;
+
 //constructor
 //TODO: set model_filename back to empty
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
@@ -57,7 +59,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
       red(1.0f),
       green(0.0f),
       blue(0.0f),
-      model_filename("bunny.obj")
+      model_filename("")
 {
     //set up the menu bar
     mainMenu = new QMenuBar(this);
@@ -282,6 +284,8 @@ void GLWidget::loadModel(){
 
     setRenderColor(0);
 
+
+
     GLuint normals_vbo = 0;
     glGenBuffers(1, &normals_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
@@ -302,6 +306,26 @@ void GLWidget::loadModel(){
 
     glEnableVertexAttribArray (1);
     glEnableVertexAttribArray (2);
+
+    //NEWNEWNEW
+    if(loadTexture()){
+        GLuint tex_vbo; //set to 0?
+        glGenTextures(1, &tex_vbo);
+        glBindTexture(GL_TEXTURE_2D, tex_vbo);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        std::cout << "W" << textureWidth << "   H" << textureHeight <<"   "<<textureData.size() << std::endl;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_FLOAT, &textureData[0]);
+
+//        for(int i = 0; i < textureData.size(); i+=3){
+//            std::cout << textureData[i] << ","
+//                         << textureData[i+1] << ","
+//                            //<< textureData[i+2] << ","
+//                            << textureData[i+2] << std::endl;
+//        }
+    }
 
     updateLights();
 }
@@ -425,6 +449,40 @@ void GLWidget::setRenderColor(int opt){
     updateGL();
 }
 
+bool GLWidget::loadTexture(){
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open Image"),QDir::homePath(), tr("Image Files (*.png)"));
+    QImage img;
+
+
+    if (!fileName.isEmpty())
+    {
+        img = QImage(fileName, "PNG");
+        textureWidth = img.width();
+        textureHeight = img.height();
+
+        for ( int row = 0; row < img.height(); ++row ){
+            for ( int col = 0; col < img.width(); ++col )
+            {
+                QColor clrCurrent( img.pixel( col,row ) );
+                textureData.push_back(clrCurrent.red()/255.0f);
+                textureData.push_back(clrCurrent.green()/255.0f);
+                textureData.push_back(clrCurrent.blue()/255.0f);
+                //textureData.push_back(clrCurrent.alpha()/255.0f);
+
+//                std::cout << "Pixel at [" << row << "," << col << "] contains color ("
+//                          << (float)(clrCurrent.red())<< ", "
+//                          << clrCurrent.green()/255.0f << ", "
+//                          << clrCurrent.blue()/255.0f << ", "
+//                          << clrCurrent.alpha()/255.0f << ")."
+//                          << std::endl;
+            }
+//            std::cout << std::endl;
+        }
+
+        return true;
+    }
+    return false;
+}
 
 
 
@@ -444,13 +502,16 @@ void GLWidget::initializeGL(){
                         reinterpret_cast<const char*>(errorStr), size);
     }
 
+    //NEW===
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    //NEW===
+
     glEnable (GL_CULL_FACE); // cull face
     glCullFace (GL_BACK); // cull back face
     glFrontFace (GL_CCW); // GL_CCW for counter clock-wise
+
+    glEnable(GL_TEXTURE_2D);
     //NEW===
 
     // get context opengl-version
@@ -480,7 +541,7 @@ void GLWidget::initializeGL(){
     projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 10.0f);
 
     //set up the view matrix (the "camera")
-    glm::vec3 eye(0, 0, 0.5);
+    glm::vec3 eye(0, 0, 3);
     glm::vec3 center(0, 0, 0);
     glm::vec3 up(0, 1, 0);
     view = glm::lookAt(eye, center, up);

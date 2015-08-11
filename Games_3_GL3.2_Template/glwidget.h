@@ -10,7 +10,6 @@
 #include <string>
 
 #include "glm/glm.hpp"
-#include "stlModel.h"
 #include "objModel.h"
 
 class GLWidget : public QGLWidget
@@ -39,7 +38,6 @@ private:
     QOpenGLBuffer m_vertexBuffer;
 
     //model related members
-    stlModel model;
     objModel obj;
     std::string model_filename;
     void loadModel();
@@ -57,7 +55,10 @@ private:
     void scaleModel(glm::vec3 scaleFactor);
     void rotateLights(float degrees);
     void updateMVP();
+
+    //new
     void updateLights();
+    bool loadTexture();
 };
 
 #endif // GLWIDGET_H
