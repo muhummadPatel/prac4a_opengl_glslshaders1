@@ -319,12 +319,16 @@ void GLWidget::loadModel(){
         std::cout << "W" << textureWidth << "   H" << textureHeight <<"   "<<textureData.size() << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_FLOAT, &textureData[0]);
 
+
 //        for(int i = 0; i < textureData.size(); i+=3){
 //            std::cout << textureData[i] << ","
 //                         << textureData[i+1] << ","
 //                            //<< textureData[i+2] << ","
 //                            << textureData[i+2] << std::endl;
 //        }
+        glUniform1i(glGetUniformLocation(m_shader.programId(),"useTexture"), 1);
+    }else{
+        glUniform1i(glGetUniformLocation(m_shader.programId(),"useTexture"), 0);
     }
 
     updateLights();
