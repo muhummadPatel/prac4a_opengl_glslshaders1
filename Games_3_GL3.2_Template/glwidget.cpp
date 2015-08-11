@@ -42,7 +42,7 @@ float k_ambient = 1.0f;
 const int numLights = 2;
 std::vector<float> lightPositions = {
     1.0f, 1.0f, 4.0f,
-    -1.0f, -1.0f, -3.0f
+    -1.0f, 1.0f, -3.0f
 };
 std::vector<float> lightIntensities = {
     0.2f, 0.2f, 0.5f,
@@ -288,10 +288,20 @@ void GLWidget::loadModel(){
     //glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.normals, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, obj.normals.size() * sizeof(glm::vec3 ), &obj.normals[0], GL_STATIC_DRAW);
 
+    GLuint uvs_vbo = 0;
+    glGenBuffers(1, &uvs_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, uvs_vbo);
+    glBufferData(GL_ARRAY_BUFFER, obj.uvs.size() * sizeof(glm::vec2 ), &obj.uvs[0], GL_STATIC_DRAW);
+
+
     glBindBuffer (GL_ARRAY_BUFFER, normals_vbo);
     glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+    glBindBuffer (GL_ARRAY_BUFFER, uvs_vbo);
+    glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
     glEnableVertexAttribArray (1);
+    glEnableVertexAttribArray (2);
 
     updateLights();
 }
@@ -470,7 +480,7 @@ void GLWidget::initializeGL(){
     projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 10.0f);
 
     //set up the view matrix (the "camera")
-    glm::vec3 eye(0, 0, 3);
+    glm::vec3 eye(0, 0, 0.5);
     glm::vec3 center(0, 0, 0);
     glm::vec3 up(0, 1, 0);
     view = glm::lookAt(eye, center, up);

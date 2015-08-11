@@ -2,6 +2,7 @@
 in vec3 vertex;
 
 layout(location = 1) in vec3 vertex_normal;
+layout(location = 2) in vec3 vertex_uv;
 
 uniform mat4 MVP;//
 uniform mat3 MVN;//
