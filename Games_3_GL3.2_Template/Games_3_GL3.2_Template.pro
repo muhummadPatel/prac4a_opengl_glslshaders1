@@ -1,11 +1,9 @@
 HEADERS       = glheaders.h \
                 glwidget.h \ 
-    stlModel.h \
     objModel.h
 
 SOURCES       = glwidget.cpp \
                 main.cpp \
-    stlModel.cpp \
     objModel.cpp
 QT += core gui opengl widgets
 
