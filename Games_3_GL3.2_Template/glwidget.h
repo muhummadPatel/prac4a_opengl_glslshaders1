@@ -41,6 +41,7 @@ private:
     objModel obj;
     std::string model_filename;
     void loadModel();
+    bool loadTexture();
 
     //members used to allow for colour changing
     float red, green, blue;
@@ -56,9 +57,8 @@ private:
     void rotateLights(float degrees);
     void updateMVP();
 
-    //new
+    //updates light positions and sends it to the shader
     void updateLights();
-    bool loadTexture();
 };
 
 #endif // GLWIDGET_H

@@ -34,25 +34,27 @@ float lightRotStep = 12.0f;
 glm::mat4 translationMat, rotationMat, scaleMat, lightRotationMat;
 glm::mat4 modelMat, view, projection;
 
+std::vector<std::string> axes = {"x-axis", "y-axis", "z-axis"};
 uint activeAxis = 0; //x=0, y=1, z=2
 uint activeTransformation = 0; //translate=0, rotate=1, scale=2, rotateLights=3
 
+//lighting related veriables
 float k_ambient = 1.0f;
 const int numLights = 2;
 std::vector<float> lightPositions = {
-    1.0f, 1.0f, 4.0f,
+    2.0f, 2.0f, 4.0f,
     -1.0f, 1.0f, -3.0f
 };
 std::vector<float> lightIntensities = {
-    0.2f, 0.2f, 0.5f,
-    0.5f, 0.2f, 0.2f
+    0.2f, 0.4f, 0.2f,
+    0.4f, 0.2f, 0.2f
 };
 
+//tecture related variables
 std::vector<float> textureData;
 uint textureWidth = 0, textureHeight = 0;
 
 //constructor
-//TODO: set model_filename back to empty
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
     : QGLWidget( format, parent ),
       m_vertexBuffer( QOpenGLBuffer::VertexBuffer ),
@@ -105,16 +107,13 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
         case 0:
             if(activeAxis == 0){
                 translateModel(glm::vec3(dir * transStep, 0.0f, 0.0f));
-                //std::cout << "translate x" << std::endl;
                 QWidget::setWindowTitle("Prac4: Translating model in x-axis");
             }else if(activeAxis == 1){
                 translateModel(glm::vec3(0.0f, dir * transStep, 0.0f));
-                //std::cout << "translate y" << std::endl;
                 QWidget::setWindowTitle("Prac4: Translating model in y-axis");
 
             }else{
                 translateModel(glm::vec3(0.0f, 0.0f, dir * transStep));
-                //std::cout << "translate z" << std::endl;
                 QWidget::setWindowTitle("Prac4: Translating model in z-axis");
             }
             break;
@@ -123,15 +122,12 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
         case 1:
             if(activeAxis == 0){
                 rotateModel(glm::vec3(1.0f, 0.0f, 0.0f), dir * rotStep);
-                //std::cout << "rotate x" << std::endl;
                 QWidget::setWindowTitle("Prac4: Rotating model in x-axis");
             }else if(activeAxis == 1){
                 rotateModel(glm::vec3(0.0f, 1.0f, 0.0f), dir * rotStep);
-                //std::cout << "rotate y" << std::endl;
                 QWidget::setWindowTitle("Prac4: Rotating model in y-axis");
             }else{
                 rotateModel(glm::vec3(0.0f, 0.0f, 1.0f), dir * rotStep);
-                //std::cout << "rotate z" << std::endl;
                 QWidget::setWindowTitle("Prac4: Rotating model in z-axis");
             }
             break;
@@ -140,30 +136,25 @@ void GLWidget::wheelEvent(QWheelEvent * evt){
         case 2:
             if(activeAxis == 0){
                 scaleModel(glm::vec3((dir * scaleStep) + 1.0f, 1.0f, 1.0f));
-                //std::cout << "scale x" << std::endl;
                 QWidget::setWindowTitle("Prac4: Scaling model in x-axis");
             }else if (activeAxis == 1){
                 scaleModel(glm::vec3(1.0f, (dir * scaleStep) + 1.0f, 1.0f));
-                //std::cout << "scale y" << std::endl;
                 QWidget::setWindowTitle("Prac4: Scaling model in y-axis");
             }else{
                 scaleModel(glm::vec3(1.0f, 1.0f, (dir * scaleStep) + 1.0f));
-                //std::cout << "scale z" << std::endl;
                 QWidget::setWindowTitle("Prac4: Scaling model in z-axis");
             }
             break;
 
-            //rotate lights
-            case 3:
-                rotateLights(dir * lightRotStep);
-                break;
+        //rotate lights
+        case 3:
+            rotateLights(dir * lightRotStep);
+            break;
     }
 
     //update the scene
     updateGL();
 }
-
-std::vector<std::string> axes = {"x-axis", "y-axis", "z-axis"};
 
 //handles keyPress input
 void GLWidget::keyPressEvent( QKeyEvent* e )
@@ -239,11 +230,9 @@ void GLWidget::loadModel(){
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    // We need us some vertex data. Start simple with a triangle ;-)
-
+    // We need us some vertex data.
     const char* fn = model_filename.c_str();
     obj.read(fn);
-    //std::cout << "objnt " << obj.vertices.size()/3 << "\n" << std::endl;
 
     m_vertexBuffer.create();
     m_vertexBuffer.setUsagePattern( QOpenGLBuffer::StaticDraw );
@@ -252,7 +241,6 @@ void GLWidget::loadModel(){
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
-    //m_vertexBuffer.allocate(points, model.numTriangles * 3 * 4 * sizeof( float ) );
     m_vertexBuffer.allocate(&obj.vertices[0], obj.vertices.size() * sizeof( glm::vec3 ) );
 
 
@@ -282,14 +270,12 @@ void GLWidget::loadModel(){
     m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 3 );
     m_shader.enableAttributeArray( "vertex" );
 
-    setRenderColor(0);
+    setRenderColor(0); //setting the default render colour
 
-
-
+    //pass the normal and uv vertex attribute data through to the shader
     GLuint normals_vbo = 0;
     glGenBuffers(1, &normals_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
-    //glBufferData(GL_ARRAY_BUFFER, model.numTriangles * 3 * 3 * sizeof( float ), model.normals, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, obj.normals.size() * sizeof(glm::vec3 ), &obj.normals[0], GL_STATIC_DRAW);
 
     GLuint uvs_vbo = 0;
@@ -307,27 +293,23 @@ void GLWidget::loadModel(){
     glEnableVertexAttribArray (1);
     glEnableVertexAttribArray (2);
 
-    //NEWNEWNEW
+    //load texture and send it to the shader
+    textureData.clear();
     if(loadTexture()){
-        GLuint tex_vbo; //set to 0?
+        GLuint tex_vbo;
         glGenTextures(1, &tex_vbo);
         glBindTexture(GL_TEXTURE_2D, tex_vbo);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        std::cout << "W" << textureWidth << "   H" << textureHeight <<"   "<<textureData.size() << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_FLOAT, &textureData[0]);
+        //std::cout << "W" << textureWidth << "   H" << textureHeight <<"   "<<textureData.size() << std::endl;
 
-
-//        for(int i = 0; i < textureData.size(); i+=3){
-//            std::cout << textureData[i] << ","
-//                         << textureData[i+1] << ","
-//                            //<< textureData[i+2] << ","
-//                            << textureData[i+2] << std::endl;
-//        }
+        //tell the shader to use the texture
         glUniform1i(glGetUniformLocation(m_shader.programId(),"useTexture"), 1);
     }else{
+        //tell the shader to use the user-defined colour
         glUniform1i(glGetUniformLocation(m_shader.programId(),"useTexture"), 0);
     }
 
@@ -375,9 +357,11 @@ void GLWidget::updateMVP(){
     glUniformMatrix3fv(glGetUniformLocation(m_shader.programId(),"MVN"), 1, GL_FALSE, &MVN[0][0]);
 
     //Redraw/update the scene
+    updateLights();
     updateGL();
 }
 
+//rotates the lights by the number fo degrees specified.
 void GLWidget::rotateLights(float degrees){
     //set the rotation matrix to the new rotation
     lightRotationMat = glm::rotate(lightRotationMat, degrees, glm::vec3(0.0f, 0.1f, 0.0f));
@@ -388,8 +372,11 @@ void GLWidget::rotateLights(float degrees){
 
 //update light vars and push them to the shader
 void GLWidget::updateLights(){
+    //computing position of rotated lights
     std::vector<float> rotatedLightPositions;
     for(int i = 0; i <  numLights; i++){
+        //rotate about the origin then translate to where the model is so we always
+        //rotate the lights around the model
         int offset = i * 3;
         glm::vec4 pos = glm::vec4(lightPositions[offset + 0], lightPositions[offset + 1], lightPositions[offset + 2], 1.0f);
         pos = translationMat * lightRotationMat * pos;
@@ -399,9 +386,11 @@ void GLWidget::updateLights(){
         rotatedLightPositions.push_back(pos[2]);
     }
 
+    //send the updated light variables to the shader
     glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_positions"), numLights, &rotatedLightPositions[0]);
     glUniform3fv(glGetUniformLocation(m_shader.programId(), "light_intensities"), numLights, &lightIntensities[0]);
     glUniform1fv(glGetUniformLocation(m_shader.programId(), "k_ambient"), 1, &k_ambient);
+    updateGL();
 }
 
 //increments the ActiveAxis for transformations (cycles in range from 0 to 2)
@@ -413,6 +402,7 @@ void GLWidget::incrementActiveAxis(){
 }
 
 //Changes the render colour to one of 5 preset options
+//NOTE: this colour will only be used if there is no texture on the object
 void GLWidget::setRenderColor(int opt){
     switch(opt){
         case 1:
@@ -453,10 +443,10 @@ void GLWidget::setRenderColor(int opt){
     updateGL();
 }
 
+//Uses a file dialog to load a texture. The texture is then read in to the textureData vector.
 bool GLWidget::loadTexture(){
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open Image"),QDir::homePath(), tr("Image Files (*.png)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"), "~", tr("Image Files (*.png)"));
     QImage img;
-
 
     if (!fileName.isEmpty())
     {
@@ -471,21 +461,11 @@ bool GLWidget::loadTexture(){
                 textureData.push_back(clrCurrent.red()/255.0f);
                 textureData.push_back(clrCurrent.green()/255.0f);
                 textureData.push_back(clrCurrent.blue()/255.0f);
-                //textureData.push_back(clrCurrent.alpha()/255.0f);
-
-//                std::cout << "Pixel at [" << row << "," << col << "] contains color ("
-//                          << (float)(clrCurrent.red())<< ", "
-//                          << clrCurrent.green()/255.0f << ", "
-//                          << clrCurrent.blue()/255.0f << ", "
-//                          << clrCurrent.alpha()/255.0f << ")."
-//                          << std::endl;
             }
-//            std::cout << std::endl;
         }
-
-        return true;
+        return true; //texture was loaded
     }
-    return false;
+    return false; //no texture was loaded
 }
 
 
@@ -506,17 +486,14 @@ void GLWidget::initializeGL(){
                         reinterpret_cast<const char*>(errorStr), size);
     }
 
-    //NEW===
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-
 
     glEnable (GL_CULL_FACE); // cull face
     glCullFace (GL_BACK); // cull back face
     glFrontFace (GL_CCW); // GL_CCW for counter clock-wise
 
     glEnable(GL_TEXTURE_2D);
-    //NEW===
 
     // get context opengl-version
     qDebug() << "Widget OpenGl: " << format().majorVersion() << "." << format().minorVersion();

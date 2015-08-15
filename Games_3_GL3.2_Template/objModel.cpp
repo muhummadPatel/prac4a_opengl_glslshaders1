@@ -9,17 +9,15 @@
 #include "objModel.h"
 #include "glm/glm.hpp"
 
+//implementation of objLoader class. Allows for reading in of obj models.
+//Adapted, as allowed under the WTFPL license used, from the tutorial at:
+//http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
+
 using namespace std;
 
-objModel::objModel()
-{
+objModel::objModel(){}
 
-}
-
-objModel::~objModel()
-{
-
-}
+objModel::~objModel(){}
 
 bool objModel::read(const char* path){
     printf("Loading OBJ file %s...\n", path);
@@ -32,7 +30,7 @@ bool objModel::read(const char* path){
 
     FILE * file = fopen(path, "r");
     if( file == NULL ){
-        printf("Impossible to open the file ! Are you in the right path ? See Tutorial 1 for details\n");
+        printf("Cannot open file.\n");
         getchar();
         return false;
     }
@@ -54,7 +52,7 @@ bool objModel::read(const char* path){
         }else if ( strcmp( lineHeader, "vt" ) == 0 ){
             glm::vec2 uv;
             fscanf(file, "%f %f\n", &uv.x, &uv.y );
-            uv.y = -uv.y; // Invert V coordinate since we will only use DDS texture, which are inverted. Remove if you want to use TGA or BMP loaders.
+            uv.y = -uv.y;
             temp_uvs.push_back(uv);
         }else if ( strcmp( lineHeader, "vn" ) == 0 ){
             glm::vec3 normal;
